@@ -10,7 +10,7 @@ db.profiles.allow( {
 search = {
 
 	endpoint: 'http://s195.qa2.api.sport195.com/profiles/',
-	perPage: 50,
+	perPage: 100,
 	page: 450,
 
 	query: function ( q, context ) {
