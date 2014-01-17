@@ -1,0 +1,132 @@
+/* CSS declarations go here */
+
+nav_height = 50px
+base_font_family = fjalla_oneregular, helvetica, sans-serif
+
+@font-face
+    font-family 'fjalla_oneregular'
+    src url('/fonts/FjallaOne-Regular/fjallaone-regular-webfont.eot')
+    src url('/fonts/FjallaOne-Regular/fjallaone-regular-webfont.eot?#iefix') format('embedded-opentype'), url('/fonts/FjallaOne-Regular/fjallaone-regular-webfont.woff') format('woff'), url('/fonts/FjallaOne-Regular/fjallaone-regular-webfont.ttf') format('truetype'), url('/fonts/FjallaOne-Regular/fjallaone-regular-webfont.svg#fjalla_oneregular') format('svg')
+    font-weight normal
+    font-style normal
+
+base_font()
+	font-weight normal
+	color color_black
+	letter-spacing 0pt
+	word-spacing 1pt
+	font-size base_font_size
+	text-align left
+	font-family base_font_family
+
+html, body
+	margin 0
+	base_font()
+
+input, textarea
+	base_font()
+
+textarea
+	text-align center
+
+.viewer,
+.overlay
+	position absolute
+	top 0
+	right 0
+	left 0
+	bottom nav_height + 120px
+
+.viewer
+	z-index 1
+
+.results
+	display block
+	margin 0 auto
+	padding-top 20px
+
+	.name
+		font-size 28px
+
+	p
+		margin 10px
+		text-align center
+
+.overlay
+	background white
+	z-index 9999
+	transition opacity .25s ease-in-out
+
+.controls
+	background black
+	position absolute
+	bottom 0
+	left 0
+	right 0
+
+	.controls-secondary
+		//width 100%
+
+		.search_bar
+			width 100%
+		.search
+			width 100%
+			display block
+			font-size 24px
+			padding 10px 5px
+			box-sizing border-box
+
+	.controls-primary
+		width 100%
+		margin 0
+		padding 0
+		position relative
+		border-top 1px solid white
+
+		.main-nav
+			display flex
+			display -ms-flexbox
+
+	.count
+		padding 20px 0
+
+.direction-ctrls
+	flex 1
+
+.up
+.down
+	background #9f4c28
+	padding 10px
+	display inline-block
+	margin 0
+	cursor pointer
+	-webkit-user-select: none;
+
+	i
+		text-align center
+		font-size 36px
+
+.big-btn
+	position absolute
+	right 0
+	bottom 0
+	top 0
+	border-left 1px solid white
+	padding-left 7px
+
+.thumbnail-small
+.thumbnail-medium
+.thumbnail-large
+	margin 4px 5px 0 0
+	background-size cover
+	background-position center
+	background-repeat no-repeat
+	display block
+	width 50px
+	height 50px
+
+.count
+	color white
+	flex 1
+
+

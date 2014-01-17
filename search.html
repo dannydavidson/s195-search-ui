@@ -1,0 +1,57 @@
+<head>
+  <title>Profile Search</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+
+</head>
+
+<template name="search">
+  <div class="viewer">
+    {{yield}}
+  </div>
+  <div class="controls">
+    <div class="controls-secondary">
+      {{> search_bar}}
+    </div>
+    <div class="controls-primary">
+      {{> main_nav}}
+    </div>
+  </div>
+  <div class="overlay"></div>
+
+</template>
+
+<template name="search_results">
+  <div class="results">
+    <p class="editable name" data-key="display_name">{{results.display_name}}</p>
+    <p><img src="{{results.images.item.large}}" /></p>
+  </div>
+</template>
+
+<template name="main_nav">
+  <div class="main-nav">
+    <div class="direction-ctrls">
+      <div class="up">
+        <i class="icon-arrow-up"></i>
+      </div>
+      <div class="down">
+        <i class="icon-arrow-down"></i>
+      </div>
+    </div>
+    <div class="count">
+      {{current}} of {{count}}
+    </div>
+    <div class="big-btn">
+      <div class="thumbnail-medium" style="background-image: url('/images/wlslogo.png');"></div>
+    </div>
+  </div>
+</template>
+
+<template name="search_bar">
+  <div class="search-bar">
+    <input type='text' class="search" value="" placeholder="Search for profiles" />
+  </div>
+</template>
+
+<template name="loading">
+  loading!
+</template>

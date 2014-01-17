@@ -1,0 +1,356 @@
+@font-face {
+    font-family: 'Sport195-ICONS';
+    /** add version buster everytime we update the font file! **/
+    src:url('/fonts/Sport195-icons/Sport195-ICONS.eot?v=6');
+    src:url('/fonts/Sport195-icons/Sport195-ICONS.eot?v=6#iefix') format('embedded-opentype'),
+        url('/fonts/Sport195-icons/Sport195-ICONS.woff?v=6') format('woff'),
+        url('/fonts/Sport195-icons/Sport195-ICONS.ttf?v=6') format('truetype'),
+        url('/fonts/Sport195-icons/Sport195-ICONS.svg?v=6#Sport195-ICONS') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class*="icon-"] {
+    font-family: 'Sport195-ICONS';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-sort-down:before {
+    content: "\e3";
+}
+.icon-view-profile:before {
+    content: "\d1";
+}
+.icon-undo:before {
+    content: "\f1";
+}
+.icon-home:before {
+    content: "\201c";
+}
+.icon-organizations:before {
+    content: "\fa";
+}
+.icon-team2:before {
+    content: "\f5";
+}
+.icon-account-details:before {
+    content: "\21";
+}
+.icon-facebook-f:before {
+    content: "\22";
+}
+.icon-privacy:before {
+    content: "\23";
+}
+.icon-member:before {
+    content: "\24";
+}
+.icon-share:before {
+    content: "\25";
+}
+.icon-apps:before {
+    content: "\26";
+}
+.icon-notifications:before {
+    content: "\27";
+}
+.icon-language:before {
+    content: "\28";
+}
+.icon-list-view:before {
+    content: "\29";
+}
+.icon-following:before {
+    content: "\2a";
+}
+.icon-circle-question:before {
+    content: "\2b";
+}
+.icon-favorite:before {
+    content: "\2c";
+}
+.icon-statistics:before {
+    content: "\2d";
+}
+.icon-log-out:before {
+    content: "\2e";
+}
+.icon-members:before {
+    content: "\30";
+}
+.icon-venues:before {
+    content: "\31";
+}
+.icon-location:before {
+    content: "\32";
+}
+.icon-flag:before {
+    content: "\33";
+}
+.icon-media:before {
+    content: "\34";
+}
+.icon-minus-2:before {
+    content: "\35";
+}
+.icon-plus:before {
+    content: "\36";
+}
+.icon-settings:before {
+    content: "\37";
+}
+.icon-brands:before {
+    content: "\38";
+}
+.icon-tags:before {
+    content: "\39";
+}
+.icon-arrow-down:before {
+    content: "\3a";
+}
+.icon-arrow-up:before {
+    content: "\3b";
+}
+.icon-arrow-left:before {
+    content: "\3c";
+}
+.icon-search:before {
+    content: "\3d";
+}
+.icon-arrow-right:before {
+    content: "\3e";
+}
+.icon-question:before {
+    content: "\3f";
+}
+.icon-managers:before {
+    content: "\40";
+}
+.icon-menu:before {
+    content: "\41";
+}
+.icon-grid-view:before {
+    content: "\42";
+}
+.icon-link:before {
+    content: "\43";
+}
+.icon-edit-pencil:before {
+    content: "\44";
+}
+.icon-close:before {
+    content: "\45";
+}
+.icon-like-thumb:before {
+    content: "\46";
+}
+.icon-dislike-thumb:before {
+    content: "\47";
+}
+.icon-equipment:before {
+    content: "\48";
+}
+.icon-sports-2:before {
+    content: "\49";
+}
+.icon-city:before {
+    content: "\4a";
+}
+.icon-state-region:before {
+    content: "\4b";
+}
+.icon-sitemap:before {
+    content: "\4c";
+}
+.icon-filter:before {
+    content: "\4d";
+}
+.icon-activity:before {
+    content: "\4e";
+}
+.icon-sport-event-type:before {
+    content: "\4f";
+}
+.icon-related-sport:before {
+    content: "\50";
+}
+.icon-venue-type:before {
+    content: "\51";
+}
+.icon-sport-role:before {
+    content: "\52";
+}
+.icon-record-type:before {
+    content: "\53";
+}
+.icon-admin:before {
+    content: "\54";
+}
+.icon-other:before {
+    content: "\55";
+}
+.icon-facebook:before {
+    content: "\56";
+}
+.icon-twitter:before {
+    content: "\57";
+}
+.icon-googleplus:before {
+    content: "\58";
+}
+.icon-dashboard:before {
+    content: "\59";
+}
+.icon-email:before {
+    content: "\5a";
+}
+.icon-check:before {
+    content: "\5b";
+}
+.icon-followers:before {
+    content: "\5d";
+}
+.icon-awards:before {
+    content: "\5e";
+}
+.icon-contacts:before {
+    content: "\5f";
+}
+.icon-add:before {
+    content: "\61";
+}
+.icon-all:before {
+    content: "\62";
+}
+.icon-info:before {
+    content: "\63";
+}
+.icon-boards:before {
+    content: "\64";
+}
+.icon-schools:before {
+    content: "\65";
+}
+.icon-clubs:before {
+    content: "\66";
+}
+.icon-leagues:before {
+    content: "\67";
+}
+.icon-highlights:before {
+    content: "\68";
+}
+.icon-scorecards:before {
+    content: "\69";
+}
+.icon-events:before {
+    content: "\6a";
+}
+.icon-standings:before {
+    content: "\6b";
+}
+.icon-athletes:before {
+    content: "\6c";
+}
+.icon-teams:before {
+    content: "\6d";
+}
+.icon-products:before {
+    content: "\6e";
+}
+.icon-shops:before {
+    content: "\6f";
+}
+.icon-injuries:before {
+    content: "\70";
+}
+.icon-sponsorships:before {
+    content: "\71";
+}
+.icon-discussions:before {
+    content: "\72";
+}
+.icon-comments:before {
+    content: "\73";
+}
+.icon-news:before {
+    content: "\74";
+}
+.icon-video:before {
+    content: "\75";
+}
+.icon-images:before {
+    content: "\76";
+}
+.icon-featured:before {
+    content: "\77";
+}
+.icon-manage-profiles:before {
+    content: "\78";
+}
+.icon-rss-feed:before {
+    content: "\79";
+}
+.icon-hints:before {
+    content: "\7a";
+}
+.icon-smile:before {
+    content: "\7b";
+}
+.icon-phone:before {
+    content: "\7c";
+}
+.icon-sad:before {
+    content: "\7d";
+}
+.icon-plane:before {
+    content: "\7e";
+}
+.icon-sports195:before {
+    content: "\c1";
+}
+.icon-sports:before {
+    content: "\c9";
+}
+.icon-follow:before {
+    content: "\cd";
+}
+.icon-female:before {
+    content: "\d3";
+}
+.icon-explore:before {
+    content: "\da";
+}
+.icon-minus:before {
+    content: "\e1";
+}
+.icon-whistle:before {
+    content: "\e2";
+}
+.icon-privacy-close:before {
+    content: "\e9";
+}
+.icon-run:before {
+    content: "\ea";
+}
+.icon-finger:before {
+    content: "\f3";
+}
+.icon-grabber:before {
+    content: "\c3";
+}
+.icon-sort-updown:before {
+    content: "\fd";
+}
+.icon-sort-up:before {
+    content: "\ed";
+}
