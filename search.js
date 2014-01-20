@@ -5,13 +5,14 @@ db.profiles.allow( {
 	update: function () {
 		return true
 	}
-} )
+} );
+
 // METHODS
 search = {
 
 	endpoint: 'http://s195.qa2.api.sport195.com/profiles/',
-	perPage: 100,
-	page: 450,
+	perPage: 1,
+	page: 1,
 
 	query: function ( q, context ) {
 		var query = {};
@@ -19,7 +20,7 @@ search = {
 			query.display_name = {
 				'$regex': '.*' + q + '.*',
 				'$options': 'ig'
-			}
+			};
 		}
 		if ( context ) {
 			query.context = context;
@@ -33,14 +34,12 @@ search = {
 	},
 
 	loadFixture: function () {
-		var self = this;
+		var self = this,
+			i = 0;
+
 		if ( db.profiles.find( {} ).count() === 0 ) {
 			_( [ 'athletes', 'teams', 'leagues', 'clubs', 'schools' ] ).each( function ( context ) {
-				HTTP.get( self.endpoint + context, {
-						per_page: self.perPage,
-						page: self.page,
-						mode: 'full'
-					},
+				HTTP.get( self.endpoint + context + '?per_page=100&page=5&mode=full',
 					function ( err, result ) {
 						_( result.data.data ).each( function ( profile ) {
 							db.profiles.insert( profile );
@@ -71,10 +70,15 @@ Router.map( function () {
 			return this.subscribe( 'search', this.params.q || '', this.params.context );
 		},
 		after: function () {
-			var profiles = db.profiles.find( {} ).fetch();
+			var inCurrentSet,
+				profiles = db.profiles.find( {} ).fetch(),
+				sessionId = Session.get( 'currentID' );
 			if ( profiles.length ) {
 				Session.set( 'q', this.params.q );
-				if ( !Session.get( 'currentID' ) ) {
+				inCurrentSet = _( profiles ).find( function ( profile ) {
+					return profile.id === sessionId;
+				} );
+				if ( !sessionId || !inCurrentSet ) {
 					search.setSelected( _( profiles ).first() );
 				}
 			}
@@ -120,7 +124,7 @@ if ( Meteor.isClient ) {
 	};
 
 	Template.main_nav.count = function () {
-		return search.query().count();
+		return db.profiles.find( {} ).count();
 	};
 
 	Template.main_nav.current = function () {
@@ -155,7 +159,7 @@ if ( Meteor.isClient ) {
 	};
 
 	Template.main_nav.events( {
-		'touchstart .down': function ( evt ) {
+		'click .down': function ( evt ) {
 			var profiles = db.profiles.find( {} ).fetch();
 			_( profiles ).some( function ( profile, i ) {
 				if ( search.isCurrentlySelected( profile ) ) {
@@ -169,7 +173,7 @@ if ( Meteor.isClient ) {
 			} );
 
 		},
-		'touchstart .up': function ( evt ) {
+		'click .up': function ( evt ) {
 			var profiles = db.profiles.find( {} ).fetch();
 			_( profiles ).some( function ( profile, i ) {
 				if ( search.isCurrentlySelected( profile ) ) {
@@ -199,7 +203,7 @@ if ( Meteor.isServer ) {
 
 	Meteor.methods( {
 
-	} )
+	} );
 
 	Meteor.startup( function () {
 
