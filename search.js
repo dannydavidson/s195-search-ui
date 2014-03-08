@@ -2,7 +2,7 @@
 db = {};
 db.profiles = new Meteor.Collection( 'profiles' );
 db.profiles.allow( {
-	update: function () {
+	update: function ( ) {
 		return true
 	}
 } );
@@ -33,18 +33,17 @@ search = {
 		} );
 	},
 
-	loadFixture: function () {
+	loadFixture: function ( ) {
 		var self = this,
 			i = 0;
 
-		if ( db.profiles.find( {} ).count() === 0 ) {
+		if ( db.profiles.find( {} ).count( ) === 0 ) {
 			_( [ 'athletes', 'teams', 'leagues', 'clubs', 'schools' ] ).each( function ( context ) {
-				HTTP.get( self.endpoint + context + '?per_page=100&page=5&mode=full',
-					function ( err, result ) {
-						_( result.data.data ).each( function ( profile ) {
-							db.profiles.insert( profile );
-						} )
-					} );
+				HTTP.get( self.endpoint + context + '?per_page=100&page=5&mode=full', function ( err, result ) {
+					_( result.data.data ).each( function ( profile ) {
+						db.profiles.insert( profile );
+					} )
+				} );
 			} );
 		}
 	},
@@ -61,25 +60,33 @@ search = {
 // ROUTING
 Router.configure( {} );
 
-Router.map( function () {
+// Set up router to subscribe to profiles that match the query param
+// and context
+Router.map( function ( ) {
 	this.route( 'search', {
 		path: '/:q?',
 		layoutTemplate: 'search',
 		template: 'search_results',
-		waitOn: function () {
+		waitOn: function ( ) {
 			return this.subscribe( 'search', this.params.q || '', this.params.context );
 		},
-		after: function () {
+		after: function ( ) {
+			// after route change make sure the active element
+			// hasn't been removed from the set. Sets first element
+			// in the set if it has been cleared
 			var inCurrentSet,
-				profiles = db.profiles.find( {} ).fetch(),
+				profiles = db.profiles.find( {} ).fetch( ),
 				sessionId = Session.get( 'currentID' );
+
 			if ( profiles.length ) {
+
 				Session.set( 'q', this.params.q );
 				inCurrentSet = _( profiles ).find( function ( profile ) {
 					return profile.id === sessionId;
 				} );
+
 				if ( !sessionId || !inCurrentSet ) {
-					search.setSelected( _( profiles ).first() );
+					search.setSelected( _( profiles ).first( ) );
 				}
 			}
 		}
@@ -89,13 +96,15 @@ Router.map( function () {
 
 if ( Meteor.isClient ) {
 
-	Meteor.autorun( function () {
+	// fade in - out on the overlay whenever
+	// the active profile changes
+	Meteor.autorun( function ( ) {
 		Session.get( 'currentID' );
 		$( '.overlay' ).css( {
 			display: 'block',
 			opacity: .75
 		} );
-		_.delay( function () {
+		_.delay( function ( ) {
 			$( '.overlay' ).css( {
 				display: 'none',
 				opacity: 0
@@ -103,16 +112,18 @@ if ( Meteor.isClient ) {
 		}, 250 );
 	} );
 
-	Meteor.autorun( function () {
+	// set value of search bar on query change
+	Meteor.autorun( function ( ) {
 		var searchBar = $( '.search' ),
 			q = Session.get( 'q' );
-		if ( searchBar.val() === "" ) {
+		if ( searchBar.val( ) === "" ) {
 			searchBar.val( q );
 		}
 	} );
 
-	Template.search_results.results = function () {
-		var profiles = db.profiles.find( {} ).fetch();
+	// Render the active profile
+	Template.search_results.results = function ( ) {
+		var profiles = db.profiles.find( {} ).fetch( );
 		if ( profiles.length ) {
 			return _( profiles ).find( function ( profile ) {
 				return search.isCurrentlySelected( profile );
@@ -123,13 +134,15 @@ if ( Meteor.isClient ) {
 		};
 	};
 
-	Template.main_nav.count = function () {
-		return db.profiles.find( {} ).count();
+	// Render the length of the filtered collection
+	Template.main_nav.count = function ( ) {
+		return db.profiles.find( {} ).count( );
 	};
 
-	Template.main_nav.current = function () {
+	// Render the current index of the active profile
+	Template.main_nav.current = function ( ) {
 		var index = 0,
-			profiles = db.profiles.find( {} ).fetch();
+			profiles = db.profiles.find( {} ).fetch( );
 		_( profiles ).some( function ( profile, i ) {
 			if ( search.isCurrentlySelected( profile ) ) {
 				index = i + 1;
@@ -139,7 +152,9 @@ if ( Meteor.isClient ) {
 		return index;
 	}
 
-	Template.search_results.rendered = function () {
+	// Register editable plugin and react to change by updating
+	// the key data in Mongo
+	Template.search_results.rendered = function ( ) {
 		var current = db.profiles.findOne( {
 			id: Session.get( 'currentID' ),
 			context: Session.get( 'currentContext' )
@@ -160,13 +175,16 @@ if ( Meteor.isClient ) {
 
 	Template.main_nav.events( {
 		'click .down': function ( evt ) {
-			var profiles = db.profiles.find( {} ).fetch();
+			// increment the active profile, wrapping to
+			// first item if at the end
+			var profiles = db.profiles.find( {} ).fetch( );
+
 			_( profiles ).some( function ( profile, i ) {
 				if ( search.isCurrentlySelected( profile ) ) {
 					if ( i < profiles.length - 1 ) {
 						search.setSelected( profiles[ i + 1 ] );
 					} else {
-						search.setSelected( _( profiles ).first() );
+						search.setSelected( _( profiles ).first( ) );
 					}
 					return true;
 				}
@@ -174,13 +192,15 @@ if ( Meteor.isClient ) {
 
 		},
 		'click .up': function ( evt ) {
-			var profiles = db.profiles.find( {} ).fetch();
+			// decrement the active profile, wrapping to
+			// the last item if at the beginning
+			var profiles = db.profiles.find( {} ).fetch( );
 			_( profiles ).some( function ( profile, i ) {
 				if ( search.isCurrentlySelected( profile ) ) {
 					if ( i > 0 ) {
 						search.setSelected( profiles[ i - 1 ] );
 					} else {
-						search.setSelected( _( profiles ).last() );
+						search.setSelected( _( profiles ).last( ) );
 					}
 					return true;
 				}
@@ -189,8 +209,9 @@ if ( Meteor.isClient ) {
 	} );
 
 	Template.search_bar.events( {
+		// update route query on search change
 		'keyup .search': function ( ev ) {
-			var val = $( '.search' ).val();
+			var val = $( '.search' ).val( );
 			Router.go( 'search', {
 				q: val
 			} );
@@ -201,14 +222,10 @@ if ( Meteor.isClient ) {
 
 if ( Meteor.isServer ) {
 
-	Meteor.methods( {
-
-	} );
-
-	Meteor.startup( function () {
+	Meteor.startup( function ( ) {
 
 		// load testing data
-		search.loadFixture();
+		search.loadFixture( );
 
 		// publish search results
 		Meteor.publish( 'search', function ( q, context ) {
