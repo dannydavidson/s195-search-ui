@@ -11,10 +11,9 @@ db.profiles.allow( {
 search = {
 
 	endpoint: 'http://s195.qa2.api.sport195.com/profiles/',
-	perPage: 1,
-	page: 1,
+	maxCached: 10,
 
-	query: function ( q, context ) {
+	query: function ( q, context, doLimit ) {
 		var query = {};
 		if ( q ) {
 			query.display_name = {
@@ -26,7 +25,7 @@ search = {
 			query.context = context;
 		}
 		return db.profiles.find( query, {
-			limit: 200,
+			limit: doLimit ? search.maxCached : undefined,
 			sort: {
 				display_name: 1
 			}
@@ -39,7 +38,7 @@ search = {
 
 		if ( db.profiles.find( {} ).count() === 0 ) {
 			_( [ 'athletes', 'teams', 'leagues', 'clubs', 'schools' ] ).each( function ( context ) {
-				HTTP.get( self.endpoint + context + '?per_page=100&page=5&mode=full',
+				HTTP.get( self.endpoint + context + '?per_page=300&page=500&mode=full',
 					function ( err, result ) {
 						_( result.data.data ).each( function ( profile ) {
 							db.profiles.insert( profile );
@@ -52,6 +51,7 @@ search = {
 		Session.set( 'currentID', model.id );
 		Session.set( 'currentContext', model.context );
 	},
+
 	isCurrentlySelected: function ( model ) {
 		return Session.get( 'currentID' ) === model.id && Session.get( 'currentContext' ) === model.context;
 	}
@@ -67,7 +67,10 @@ Router.map( function () {
 		layoutTemplate: 'search',
 		template: 'search_results',
 		waitOn: function () {
-			return this.subscribe( 'search', this.params.q || '', this.params.context );
+			return [
+				this.subscribe( 'search', this.params.q || '', this.params.context ),
+				this.subscribe( 'count', this.params.q || '', this.params.context )
+				];
 		},
 		after: function () {
 			var inCurrentSet,
@@ -88,6 +91,8 @@ Router.map( function () {
 
 
 if ( Meteor.isClient ) {
+
+	db.count = new Meteor.Collection( 'count' );
 
 	Meteor.autorun( function () {
 		Session.get( 'currentID' );
@@ -124,7 +129,13 @@ if ( Meteor.isClient ) {
 	};
 
 	Template.main_nav.count = function () {
-		return db.profiles.find( {} ).count();
+		var totalCount = db.count.findOne( {} ),
+			localCount = db.profiles.find( {} ).count();
+
+		if ( totalCount && localCount >= search.maxCached ) {
+			return totalCount.count;
+		}
+		return localCount;
 	};
 
 	Template.main_nav.current = function () {
@@ -165,8 +176,6 @@ if ( Meteor.isClient ) {
 				if ( search.isCurrentlySelected( profile ) ) {
 					if ( i < profiles.length - 1 ) {
 						search.setSelected( profiles[ i + 1 ] );
-					} else {
-						search.setSelected( _( profiles ).first() );
 					}
 					return true;
 				}
@@ -179,8 +188,6 @@ if ( Meteor.isClient ) {
 				if ( search.isCurrentlySelected( profile ) ) {
 					if ( i > 0 ) {
 						search.setSelected( profiles[ i - 1 ] );
-					} else {
-						search.setSelected( _( profiles ).last() );
 					}
 					return true;
 				}
@@ -201,18 +208,58 @@ if ( Meteor.isClient ) {
 
 if ( Meteor.isServer ) {
 
-	Meteor.methods( {
-
-	} );
-
 	Meteor.startup( function () {
+
+		var countId = new Meteor.Collection.ObjectID(),
+			count = 0;
 
 		// load testing data
 		search.loadFixture();
 
 		// publish search results
 		Meteor.publish( 'search', function ( q, context ) {
-			return search.query( q, context );
+			return search.query( q, context, true );
+		} );
+
+		Meteor.publish( 'count', function ( q, context ) {
+			var self = this,
+				cursor = search.query( q, context ),
+				count = cursor.count(),
+				initializing = true,
+				handle = cursor.observeChanges( {
+					added: function ( id ) {
+						if ( !initializing ) {
+							count++;
+							self.changed( 'count', countId, {
+								count: count
+							} );
+						}
+
+					},
+					removed: function ( id ) {
+						count--;
+						self.changed( 'count', countId, {
+							count: count
+						} );
+					}
+				} );
+
+			// Observe only returns after the initial added callbacks have
+			// run.  Now return an initial value and mark the subscription
+			// as ready.
+			initializing = false;
+			self.added( 'count', countId, {
+				count: count
+			} );
+			self.ready();
+
+			// Stop observing the cursor when client unsubs.
+			// Stopping a subscription automatically takes
+			// care of sending the client any removed messages.
+			self.onStop( function () {
+				handle.stop();
+			} );
+
 		} );
 
 	} );
