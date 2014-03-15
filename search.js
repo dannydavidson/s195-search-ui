@@ -3,17 +3,19 @@ db = {};
 db.profiles = new Meteor.Collection( 'profiles' );
 db.profiles.allow( {
 	update: function ( ) {
-		return true
+		return true;
 	}
 } );
 
 // METHODS
 search = {
 
-	endpoint: 'http://s195.qa2.api.sport195.com/profiles/',
+	endpoint: 'http://s195.qa1.mobile.sport195.com/api/service/-/profiles/',
 	perPage: 1,
 	page: 1,
 
+	// perform regex query of profile using `q`,
+	// optionally limiting by `context`
 	query: function ( q, context ) {
 		var query = {};
 		if ( q ) {
@@ -26,7 +28,6 @@ search = {
 			query.context = context;
 		}
 		return db.profiles.find( query, {
-			limit: 200,
 			sort: {
 				display_name: 1
 			}
@@ -38,11 +39,11 @@ search = {
 			i = 0;
 
 		if ( db.profiles.find( {} ).count( ) === 0 ) {
-			_( [ 'athletes', 'teams', 'leagues', 'clubs', 'schools' ] ).each( function ( context ) {
-				HTTP.get( self.endpoint + context + '?per_page=100&page=5&mode=full', function ( err, result ) {
+			_( [ 'athletes', 'teams' ] ).each( function ( context ) {
+				HTTP.get( self.endpoint + context + '?per_page=100&page=5&mode=basic', function ( err, result ) {
 					_( result.data.data ).each( function ( profile ) {
 						db.profiles.insert( profile );
-					} )
+					} );
 				} );
 			} );
 		}
@@ -56,9 +57,6 @@ search = {
 	}
 };
 
-
-// ROUTING
-Router.configure( {} );
 
 // Set up router to subscribe to profiles that match the query param
 // and context
@@ -102,7 +100,7 @@ if ( Meteor.isClient ) {
 		Session.get( 'currentID' );
 		$( '.overlay' ).css( {
 			display: 'block',
-			opacity: .75
+			opacity: 0.75
 		} );
 		_.delay( function ( ) {
 			$( '.overlay' ).css( {
@@ -119,6 +117,20 @@ if ( Meteor.isClient ) {
 		if ( searchBar.val( ) === "" ) {
 			searchBar.val( q );
 		}
+	} );
+
+	// observe profile changes, setting the current profile
+	// on any insertions
+	Meteor.autorun( function ( ) {
+		var profiles = db.profiles.find( {} );
+		profiles.observeChanges( {
+			added: function ( id, fields ) {
+				console.log( id );
+				console.log( fields );
+				Session.set( 'currentID', id );
+				Session.set( 'currentContext', fields.context );
+			}
+		} )
 	} );
 
 	// Render the active profile
@@ -143,6 +155,7 @@ if ( Meteor.isClient ) {
 	Template.main_nav.current = function ( ) {
 		var index = 0,
 			profiles = db.profiles.find( {} ).fetch( );
+
 		_( profiles ).some( function ( profile, i ) {
 			if ( search.isCurrentlySelected( profile ) ) {
 				index = i + 1;
@@ -150,7 +163,7 @@ if ( Meteor.isClient ) {
 			}
 		} );
 		return index;
-	}
+	};
 
 	// Register editable plugin and react to change by updating
 	// the key data in Mongo
@@ -224,7 +237,11 @@ if ( Meteor.isServer ) {
 
 	Meteor.startup( function ( ) {
 
-		// load testing data
+		Facts.setUserIdFilter( function ( ) {
+			return true;
+		} );
+
+		// Uncomment to load an initial dataset
 		search.loadFixture( );
 
 		// publish search results
